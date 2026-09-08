@@ -73,12 +73,11 @@ const hackathonPhases = [
   "Participants Reach",
   "Ideation",
   "Review 0",
-  "Review 1",
   "Lunch",
-  "Speaker Sessions",
-  "Review 2",
-  "Dinner",
   "Begin Hacking",
+  "Review 1",
+  "Dinner",
+  "Review 2",
   "Final Review",
 ];
 
@@ -107,6 +106,7 @@ const AdminDashboard = () => {
   const [teamToEliminate, setTeamToEliminate] = useState<number | null>(null);
   const [isEliminationModalOpen, setIsEliminationModalOpen] = useState(false);
   const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
+  const [isMobileTimelineOpen, setIsMobileTimelineOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [previousReview, setPreviousReview] = useState<Review | null>(null);
 
@@ -452,8 +452,36 @@ const AdminDashboard = () => {
   return (
     <div className="h-screen w-full flex overflow-hidden bg-[#F6F7FA] text-[#11152B] font-sans">
       
-      {/* ── SIDEBAR ──────────────────────────────────────────────────────── */}
-      <Timeline currentPhase={timelinePhase || "Participants reach"} teamName="Admin Panel" />
+      {/* ── DESKTOP SIDEBAR ─────────────────────────────────────────────── */}
+      <Timeline currentPhase={timelinePhase || "Participants reach"} teamName="Admin Panel" className="hidden lg:flex" />
+
+      {/* ── MOBILE SIDEBAR DRAWER ───────────────────────────────────────── */}
+      <AnimatePresence>
+        {isMobileTimelineOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-[#11152B]/60 backdrop-blur-sm lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileTimelineOpen(false)}
+            />
+            <motion.div
+              className="fixed inset-y-0 left-0 z-50 lg:hidden shadow-2xl"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 250 }}
+            >
+              <Timeline
+                currentPhase={timelinePhase || "Participants reach"}
+                teamName="Admin Panel"
+                onClose={() => setIsMobileTimelineOpen(false)}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
       <div className="flex-1 relative overflow-hidden flex flex-col h-screen">
@@ -474,30 +502,39 @@ const AdminDashboard = () => {
         </div>
 
         {/* Content Wrapper */}
-        <div className="relative z-10 flex-1 overflow-y-auto p-10 pb-20">
+        <div className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 pb-20">
           
           {/* ── HEADER ───────────────────────────────────────────────────── */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-4xl font-extrabold tracking-tight mb-2 flex items-center gap-2">
-                Hi, {user?.name || "Admin"}
-              </h1>
-              <p className="text-gray-500 font-medium">
-                Manage the Hackulus&apos;25 event • All systems operational
-              </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsMobileTimelineOpen(true)}
+                className="lg:hidden p-2.5 rounded-xl bg-white border border-gray-200 text-[#11152B] shadow-sm hover:bg-gray-50 active:scale-95 transition-all cursor-pointer flex-shrink-0"
+                aria-label="Open timeline menu"
+              >
+                <Menu className="w-5 h-5 text-[#F67C1B]" />
+              </button>
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-1 flex items-center gap-2">
+                  Hi, {user?.name || "Admin"}
+                </h1>
+                <p className="text-gray-500 font-medium text-xs sm:text-sm">
+                  Manage the Hackulus&apos;26 event • All systems operational
+                </p>
+              </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               <Button
                 onClick={() => setIsLeaderboardModalOpen(true)}
                 variant="outline"
-                className="flex items-center gap-2 bg-white hover:bg-gray-50 text-[#11152B] border-gray-200 rounded-full px-5 py-2 text-sm font-bold shadow-sm h-10 transition-transform hover:scale-105 cursor-pointer"
+                className="flex items-center gap-2 bg-white hover:bg-gray-50 text-[#11152B] border-gray-200 rounded-full px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold shadow-sm h-9 sm:h-10 transition-transform hover:scale-105 cursor-pointer"
               >
                 <Trophy className="w-4 h-4 text-[#F67C1B]" />
                 <span>Leaderboard</span>
               </Button>
 
-              <div className="flex items-center gap-2 bg-white px-5 py-2 rounded-full border border-green-500/50 shadow-sm text-[#11152B] font-bold h-10">
+              <div className="flex items-center gap-2 bg-white px-4 sm:px-5 py-2 rounded-full border border-green-500/50 shadow-sm text-[#11152B] text-xs sm:text-sm font-bold h-9 sm:h-10">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                 <span className="capitalize">{user?.role === "judge" ? "Judge Mode" : "Admin Mode"}</span>
               </div>
@@ -885,7 +922,7 @@ const AdminDashboard = () => {
                   </h3>
                 </div>
                 <p className="text-red-700/70 text-sm mb-4">
-                   Permanently eliminate a team from Hackulus&apos;25.
+                   Permanently eliminate a team from Hackulus&apos;26.
                 </p>
 
                 <div className="flex gap-4">

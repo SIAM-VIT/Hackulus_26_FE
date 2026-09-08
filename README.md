@@ -1,12 +1,12 @@
 <p align="center"><img src="https://imgur.com/Vp4LWt0.png" width=160 title="SIAM-VIT" alt="SIAM-VIT"></p>
 <div align="center">
-  <h3 align="center">Hackulus'25 Frontend</h3>
+  <h3 align="center">Hackulus'26 Frontend</h3>
 
   <p align="center">
     <a href="https://github.com/orgs/SIAM-VIT/repositories?q=hackulus"><strong>Explore other Hackulus repositories</strong></a>
     <br />
     <br />
-    <a href="https://github.com/SIAM-VIT/hackulus25-fe/issues">Report Bug</a>
+    <a href="https://github.com/SIAM-VIT/hackulus26-fe/issues">Report Bug</a>
     ·
     <a href="https://hackulus.siamvit.com">Live Deployment</a>
   </p>
@@ -27,7 +27,7 @@
 
 ## About The Project
 
-This repository is the official frontend for *Hackulus'25*, SIAM-VIT’s flagship hackathon.  
+This repository is the official frontend for *Hackulus'26*, SIAM-VIT’s flagship hackathon.  
 The frontend is built using *Next.js + React*, and works with the backend to provide UI for tracks, submissions, admins, authentication, and other hackathon workflows.
 
 *Key Features:*
@@ -56,18 +56,19 @@ Make sure you have the following installed:
 
 - [Node.js](https://nodejs.org/) (v18+ recommended)  
 - npm  
-- Access to the backend (running or hosted) with its base URL (https://hackulus25-be-express.onrender.com)  
+- Access to the backend (running or hosted) with its base URL (https://hackulus26-be-express.onrender.com)  
 
 ## Installation
 
 1. Clone the repo  
    ```sh
-   git clone https://github.com/SIAM-VIT/hackulus25-fe.git
+   git clone https://github.com/SIAM-VIT/hackulus26-fe.git
+   ```
 
 2. Navigate into the project directory
    ```sh
-   cd hackulus25-fe
-
+   cd hack-web-main
+   ```
 3. Install dependencies
    ```sh
    npm install
@@ -104,12 +105,45 @@ npm start
         </a>
       </div>
     </td>
-
-    
-   <td>
+    <td>
+      <strong>pseudorex</strong>
+      <div>
+        <img src="https://avatars.githubusercontent.com/pseudorex" width="150" height="150" alt="pseudorex">
+      </div>
+      <div>
+        <a href="https://github.com/pseudorex">
+          <img src="http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height="36" alt="GitHub"/>
+        </a>
+      </div>
+    </td>
+    <td>
+      <strong>Pranshi Garg</strong>
+      <div>
+        <img src="https://avatars.githubusercontent.com/PranshiGarg01" width="150" height="150" alt="Pranshi Garg">
+      </div>
+      <div>
+        <a href="https://github.com/PranshiGarg01">
+          <img src="http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height="36" alt="GitHub"/>
+        </a>
+      </div>
+    </td>
+    <td>
+      <strong>Vaibhav</strong>
+      <div>
+        <img src="https://avatars.githubusercontent.com/GVaibhav92" width="150" height="150" alt="GVaibhav92">
+      </div>
+      <div>
+        <a href="https://github.com/GVaibhav92">
+          <img src="http://www.iconninja.com/files/241/825/211/round-collaboration-social-github-code-circle-network-icon.svg" width="36" height="36" alt="GitHub"/>
+        </a>
+      </div>
+    </td>
+  </tr>
+  <tr align="center" style="font-weight: bold;">
+    <td>
       <strong>Janaki Pillai (Frontend)</strong>
       <div>
-        <img src="https://avatars.githubusercontent.com/jan-pr" width="150" height="150" alt="Nainika Anish">
+        <img src="https://avatars.githubusercontent.com/jan-pr" width="150" height="150" alt="Janaki Pillai">
       </div>
       <div>
         <a href="https://github.com/jan-pr">
@@ -117,8 +151,7 @@ npm start
         </a>
       </div>
     </td>
-
-   <td>
+    <td>
       <strong>Suhani Singh (Design)</strong>
       <div>
         <img src="https://avatars.githubusercontent.com/singhsuhanibaghel" width="150" height="150" alt="Suhani Singh">
@@ -129,8 +162,7 @@ npm start
         </a>
       </div>
     </td>
-
-   <td>
+    <td>
       <strong>Nainika Anish (Design)</strong>
       <div>
         <img src="https://avatars.githubusercontent.com/nainika1105" width="150" height="150" alt="Nainika Anish">
@@ -141,8 +173,7 @@ npm start
         </a>
       </div>
     </td>
-
-   <td>
+    <td>
       <strong>Ruhi Adke (Design)</strong>
       <div>
         <img src="https://avatars.githubusercontent.com/ruhiadke" width="150" height="150" alt="Ruhi Adke">

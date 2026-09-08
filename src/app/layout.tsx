@@ -5,8 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import MockProvider from "@/components/mock-provider";
 
 export const metadata: Metadata = {
-  title: "Hackulus'25",
-  description: "The official portal for Hackulus 2025 by SIAM-VIT.",
+  title: "Hackulus'26",
+  description: "The official portal for Hackulus 2026 by SIAM-VIT.",
 };
 
 export default function RootLayout({
