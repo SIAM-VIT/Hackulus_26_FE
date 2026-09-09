@@ -277,7 +277,7 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen w-full flex overflow-hidden bg-[#F6F7FA] text-[#11152B] font-sans">
-      
+
       {/* ── DESKTOP SIDEBAR ─────────────────────────────────────────────── */}
       <Timeline currentPhase={currentPhase} teamName={dashboardData?.team?.team_name} className="hidden lg:flex" />
 
@@ -311,7 +311,7 @@ const Dashboard = () => {
 
       {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
       <div className="flex-1 relative overflow-hidden flex flex-col h-screen">
-        
+
         {/* Background Decorative Elements */}
         <div className="absolute top-8 right-8 grid grid-cols-4 gap-2 opacity-50 pointer-events-none z-0">
           {[...Array(16)].map((_, i) => (
@@ -321,16 +321,16 @@ const Dashboard = () => {
             ></div>
           ))}
         </div>
-        
+
         <div className="absolute -bottom-32 -left-10 w-full h-[300px] pointer-events-none z-0 opacity-80 flex">
-           {/* Abstract wavy bottom shapes */}
-           <div className="w-[800px] h-[800px] rounded-full bg-gradient-to-tr from-[#11152B] to-[#1C254C] absolute -bottom-[600px] -left-[200px]"></div>
-           <div className="w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#FF512F] to-[#F09819] absolute -bottom-[450px] left-[150px] opacity-90"></div>
+          {/* Abstract wavy bottom shapes */}
+          <div className="w-[800px] h-[800px] rounded-full bg-gradient-to-tr from-[#11152B] to-[#1C254C] absolute -bottom-[600px] -left-[200px]"></div>
+          <div className="w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#FF512F] to-[#F09819] absolute -bottom-[450px] left-[150px] opacity-90"></div>
         </div>
 
         {/* Content Wrapper */}
         <div className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 pb-20">
-          
+
           {/* ── HEADER ───────────────────────────────────────────────────── */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div className="flex items-center gap-3">
@@ -350,7 +350,7 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               {dashboardData?.currentPhase && (
                 <div className="flex items-center gap-2.5 sm:gap-3.5 bg-white px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full border-2 border-[#F67C1B]/50 shadow-[0_4px_20px_rgba(246,124,27,0.15)] text-[#11152B] text-sm sm:text-base md:text-lg font-black tracking-wide">
@@ -373,13 +373,13 @@ const Dashboard = () => {
 
           {/* ── TOP BENTO CARDS ─────────────────────────────────────────── */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-10">
-            
+
             {/* 1. Team Card */}
             <div className="bg-[#151932] rounded-3xl p-6 shadow-xl flex flex-col relative overflow-hidden border border-white/5">
               {/* Decorative dots top-left */}
               <div className="absolute top-6 left-6 grid grid-cols-2 gap-1.5 opacity-30">
                 {[...Array(4)].map((_, i) => (
-                   <div key={i} className={`w-1 h-1 rounded-full ${i===0?"bg-[#F67C1B]":"bg-white"}`}></div>
+                  <div key={i} className={`w-1 h-1 rounded-full ${i === 0 ? "bg-[#F67C1B]" : "bg-white"}`}></div>
                 ))}
               </div>
 
@@ -448,7 +448,7 @@ const Dashboard = () => {
                               {member.name}
                             </span>
                           </div>
-                          
+
                           <div className="flex items-center gap-2 flex-shrink-0">
                             {member.is_leader && (
                               <span className="text-[#F67C1B] text-[10px] font-bold">Leader</span>
@@ -471,76 +471,76 @@ const Dashboard = () => {
 
             {/* 2. CTA Card */}
             <div className="bg-[#151932] rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-white/5 flex flex-col justify-center">
-               {/* Glowing background effects */}
-               <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
-               <div className="absolute left-10 top-1/2 -translate-y-1/2 w-32 h-32 bg-[#F67C1B]/20 rounded-full blur-[60px]"></div>
-               
-               <div className="flex flex-col sm:flex-row h-full items-center gap-6 relative z-10">
-                 {/* Left Graphic */}
-                 <div className="w-full sm:w-1/2 flex items-center justify-center relative">
-                    <div className="relative">
-                      <Image
-                         src="/vector12.svg"
-                         alt="Submission graphic"
-                         width={180}
-                         height={180}
-                         className="opacity-90 object-contain drop-shadow-2xl"
-                      />
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_0_15px_rgba(246,124,27,0.8)]">
-                         <Lightbulb className="w-16 h-16 sm:w-20 sm:h-20 text-[#F67C1B] fill-[#F67C1B]/20" strokeWidth={1} />
+              {/* Glowing background effects */}
+              <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
+              <div className="absolute left-10 top-1/2 -translate-y-1/2 w-32 h-32 bg-[#F67C1B]/20 rounded-full blur-[60px]"></div>
+
+              <div className="flex flex-col sm:flex-row h-full items-center gap-6 relative z-10">
+                {/* Left Graphic */}
+                <div className="w-full sm:w-1/2 flex items-center justify-center relative">
+                  <div className="relative">
+                    <Image
+                      src="/vector12.svg"
+                      alt="Submission graphic"
+                      width={180}
+                      height={180}
+                      className="opacity-90 object-contain drop-shadow-2xl"
+                    />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_0_15px_rgba(246,124,27,0.8)]">
+                      <Lightbulb className="w-16 h-16 sm:w-20 sm:h-20 text-[#F67C1B] fill-[#F67C1B]/20" strokeWidth={1} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Content */}
+                <div className="w-full sm:w-1/2 sm:pl-4 flex flex-col justify-center text-center sm:text-left">
+                  <h2 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold leading-[1.1] mb-4">
+                    Turn your ideas<br />into reality
+                  </h2>
+
+                  {/* Status badges */}
+                  <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start mb-4">
+                    {dashboardData?.team?.problem_statement_id && (
+                      <div className="flex items-center gap-1.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 px-3 py-1 rounded-full font-bold text-xs">
+                        <Lock className="w-3 h-3" />
+                        Track & PS Locked
                       </div>
-                    </div>
-                 </div>
-
-                 {/* Right Content */}
-                 <div className="w-full sm:w-1/2 sm:pl-4 flex flex-col justify-center text-center sm:text-left">
-                    <h2 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold leading-[1.1] mb-4">
-                      Turn your ideas<br />into reality
-                    </h2>
-
-                    {/* Status badges */}
-                    <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start mb-4">
-                      {dashboardData?.team?.problem_statement_id && (
-                        <div className="flex items-center gap-1.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 px-3 py-1 rounded-full font-bold text-xs">
-                          <Lock className="w-3 h-3" />
-                          Track & PS Locked
-                        </div>
-                      )}
-                      {existingReview1Submission && (
-                        <div className="flex items-center gap-1.5 bg-[#4ADE80]/20 text-[#4ADE80] border border-[#4ADE80]/40 px-3 py-1 rounded-full font-bold text-xs shadow-[0_0_15px_rgba(74,222,128,0.2)]">
-                          <CheckCircle2 className="w-3 h-3 fill-current text-[#151932]" />
-                          Review 1 Done
-                        </div>
-                      )}
-                      {existingReview2Submission && (
-                        <div className="flex items-center gap-1.5 bg-purple-500/20 text-purple-300 border border-purple-500/40 px-3 py-1 rounded-full font-bold text-xs">
-                          <CheckCircle2 className="w-3 h-3 fill-current text-[#151932]" />
-                          Final Done
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex justify-center sm:justify-start">
-                      <Button
-                        onClick={handleButtonClick}
-                        disabled={buttonState.action === "closed" || buttonState.action === "eliminated"}
-                        className="group relative flex items-center justify-between w-full sm:w-[240px] bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white font-bold text-sm sm:text-base px-6 py-5 sm:py-6 rounded-full shadow-[0_8px_20px_rgba(246,124,27,0.3)] hover:shadow-[0_12px_25px_rgba(246,124,27,0.4)] transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
-                      >
-                        <span className="truncate pr-2">{buttonState.text}</span>
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
-                           <ArrowRight className="w-4 h-4 text-[#F67C1B] group-hover:translate-x-0.5 transition-transform" />
-                        </div>
-                      </Button>
-                    </div>
-                    {(buttonState.action === "closed" || buttonState.action === "eliminated") && (
-                      <span className="text-white/40 text-xs mt-2 block">
-                        {buttonState.action === "eliminated"
-                          ? "Eliminated teams cannot submit."
-                          : "Submissions are currently closed."}
-                      </span>
                     )}
-                 </div>
-               </div>
+                    {existingReview1Submission && (
+                      <div className="flex items-center gap-1.5 bg-[#4ADE80]/20 text-[#4ADE80] border border-[#4ADE80]/40 px-3 py-1 rounded-full font-bold text-xs shadow-[0_0_15px_rgba(74,222,128,0.2)]">
+                        <CheckCircle2 className="w-3 h-3 fill-current text-[#151932]" />
+                        Review 1 Done
+                      </div>
+                    )}
+                    {existingReview2Submission && (
+                      <div className="flex items-center gap-1.5 bg-purple-500/20 text-purple-300 border border-purple-500/40 px-3 py-1 rounded-full font-bold text-xs">
+                        <CheckCircle2 className="w-3 h-3 fill-current text-[#151932]" />
+                        Final Done
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-center sm:justify-start">
+                    <Button
+                      onClick={handleButtonClick}
+                      disabled={buttonState.action === "closed" || buttonState.action === "eliminated"}
+                      className="group relative flex items-center justify-between w-full sm:w-[240px] bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white font-bold text-sm sm:text-base px-6 py-5 sm:py-6 rounded-full shadow-[0_8px_20px_rgba(246,124,27,0.3)] hover:shadow-[0_12px_25px_rgba(246,124,27,0.4)] transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
+                    >
+                      <span className="truncate pr-2">{buttonState.text}</span>
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
+                        <ArrowRight className="w-4 h-4 text-[#F67C1B] group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </Button>
+                  </div>
+                  {(buttonState.action === "closed" || buttonState.action === "eliminated") && (
+                    <span className="text-white/40 text-xs mt-2 block">
+                      {buttonState.action === "eliminated"
+                        ? "Eliminated teams cannot submit."
+                        : "Submissions are currently closed."}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
 
           </div>
@@ -548,11 +548,11 @@ const Dashboard = () => {
           {/* ── TRACKS GRID ─────────────────────────────────────────────── */}
           <div>
             <div className="flex items-center gap-2 mb-6">
-               <span className="text-[#F67C1B] font-black text-2xl italic">/</span>
-               <h2 className="text-2xl font-bold tracking-wide text-[#11152B] uppercase">Tracks</h2>
+              <span className="text-[#F67C1B] font-black text-2xl italic">/</span>
+              <h2 className="text-2xl font-bold tracking-wide text-[#11152B] uppercase">Tracks</h2>
             </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-4 w-full">
               {tracks.map((track) => {
                 const detail = trackinfo.find(
                   (t) =>
@@ -576,24 +576,30 @@ const Dashboard = () => {
                   <div
                     key={track.name}
                     onClick={() => handleTrackClick(track.name)}
-                    className="bg-white rounded-2xl p-4 pt-6 pb-5 flex flex-col items-center justify-between cursor-pointer border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 relative group min-h-[190px]"
+                    className="bg-gradient-to-b from-[#FFE5CF] via-[#FFF1E4] to-[#FFF9F3] rounded-2xl p-4 pt-6 pb-5 flex flex-col items-center justify-between cursor-pointer border-2 border-[#F67C1B]/30 hover:border-[#F67C1B]/70 shadow-[0_8px_30px_rgba(246,124,27,0.12)] hover:shadow-[0_14px_40px_rgba(246,124,27,0.24)] transition-all duration-300 hover:-translate-y-1 relative group min-h-[190px]"
                   >
                     {/* PS Count Badge */}
                     <div className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-extrabold bg-gradient-to-r from-[#FF512F] to-[#F09819] shadow-md shadow-[#F09819]/35 border border-white/60 z-10">
                       {psCount}
                     </div>
 
-                    <div className="flex-1 flex items-center justify-center w-full relative my-2">
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-300 rounded-full blur-xl scale-75 bg-gradient-to-r from-[#FF512F] to-[#F09819]" />
-                      <Image
-                        src={logo}
-                        alt={track.name}
-                        width={75}
-                        height={75}
-                        className="object-contain group-hover:scale-110 transition-transform duration-300 relative z-10 drop-shadow-sm invert opacity-80 group-hover:opacity-100 max-h-[75px]"
+                    <div className="flex-1 flex items-center justify-center w-full relative my-2 min-h-[75px]">
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-25 transition-opacity duration-300 rounded-full blur-xl scale-75 bg-gradient-to-r from-[#FF512F] to-[#F09819]" />
+                      <div
+                        className="w-[75px] h-[75px] bg-gradient-to-br from-[#FF512F] via-[#F67C1B] to-[#F09819] group-hover:scale-110 transition-transform duration-300 relative z-10 drop-shadow-sm"
+                        style={{
+                          maskImage: `url(${logo})`,
+                          WebkitMaskImage: `url(${logo})`,
+                          maskSize: "contain",
+                          WebkitMaskSize: "contain",
+                          maskPosition: "center",
+                          WebkitMaskPosition: "center",
+                          maskRepeat: "no-repeat",
+                          WebkitMaskRepeat: "no-repeat",
+                        }}
                       />
                     </div>
-                    
+
                     <p className="text-center font-bold text-xs sm:text-sm leading-tight text-[#11152B] mt-2 max-w-[120px] line-clamp-2">
                       {track.name}
                     </p>
