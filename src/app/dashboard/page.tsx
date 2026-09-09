@@ -76,20 +76,6 @@ interface DashboardData {
   currentPhase: string;
 }
 
-// Map track names to their specific accent colors
-const trackColors: Record<string, string> = {
-  "IOT": "#7C3AED", // Purple
-  "Creative Tech": "#EA580C", // Orange
-  "FinTech": "#16A34A", // Green
-  "Cybersecurity": "#2563EB", // Blue
-  "VIT Centric": "#F97316", // Amber/Orange
-  "Environments Sustainability": "#059669", // Emerald
-  // Fallback aliases
-  "AI and Mathematical Modelling": "#7C3AED",
-  "Cyber Security": "#2563EB",
-  "VIT-Centric": "#F97316",
-  "Sustainability": "#059669",
-};
 
 const Dashboard = () => {
   const { user } = useAuth();
