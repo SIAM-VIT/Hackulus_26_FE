@@ -353,8 +353,8 @@ const Dashboard = () => {
             
             <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
               {dashboardData?.currentPhase && (
-                <div className="flex items-center gap-2 bg-white px-4 sm:px-5 py-2 rounded-full border border-[#F67C1B]/50 shadow-sm text-[#11152B] text-xs sm:text-sm font-bold">
-                  <Star className="w-4 h-4 text-[#F67C1B] fill-current" />
+                <div className="flex items-center gap-2.5 sm:gap-3.5 bg-white px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full border-2 border-[#F67C1B]/50 shadow-[0_4px_20px_rgba(246,124,27,0.15)] text-[#11152B] text-sm sm:text-base md:text-lg font-black tracking-wide">
+                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-[#F67C1B] fill-current flex-shrink-0" />
                   <span>{dashboardData.currentPhase} Phase</span>
                 </div>
               )}
