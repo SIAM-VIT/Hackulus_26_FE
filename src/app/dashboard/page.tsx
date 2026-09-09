@@ -22,7 +22,6 @@ import {
   CheckCircle2,
   ArrowRight,
   Lightbulb,
-  Trophy,
   AlertTriangle,
   Lock,
   Menu,
