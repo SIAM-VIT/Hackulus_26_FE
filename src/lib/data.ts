@@ -17,7 +17,7 @@ export const whitelist = [
 export const tracks = [
   {
     name: "IOT",
-    logo: "/ai.webp",
+    logo: "/iot.svg",
   },
   {
     name: "Creative Tech",

@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
 import MockProvider from "@/components/mock-provider";
+import KeepAlive from "@/components/keep-alive";
 
 export const metadata: Metadata = {
   title: "Hackulus'26",
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className="antialiased bg-black">
         <MockProvider>
           <AuthProvider>
+            <KeepAlive />
             {children}
             <Toaster position="top-center" richColors />
           </AuthProvider>
