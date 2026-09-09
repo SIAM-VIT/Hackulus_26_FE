@@ -579,18 +579,12 @@ const Dashboard = () => {
                     className="bg-white rounded-2xl p-4 pt-6 pb-5 flex flex-col items-center justify-between cursor-pointer border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 relative group min-h-[190px]"
                   >
                     {/* PS Count Badge */}
-                    <div 
-                      className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold shadow-md z-10"
-                      style={{ backgroundColor: accentColor }}
-                    >
+                    <div className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-extrabold bg-gradient-to-r from-[#FF512F] to-[#F09819] shadow-md shadow-[#F09819]/35 border border-white/60 z-10">
                       {psCount}
                     </div>
 
                     <div className="flex-1 flex items-center justify-center w-full relative my-2">
-                      <div 
-                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-full blur-xl scale-75"
-                        style={{ backgroundColor: accentColor }}
-                      />
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-300 rounded-full blur-xl scale-75 bg-gradient-to-r from-[#FF512F] to-[#F09819]" />
                       <Image
                         src={logo}
                         alt={track.name}
