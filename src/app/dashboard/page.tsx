@@ -584,9 +584,9 @@ const Dashboard = () => {
                     </div>
 
                     <div className="flex-1 flex items-center justify-center w-full relative my-2 min-h-[75px]">
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-25 transition-opacity duration-300 rounded-full blur-xl scale-75 bg-gradient-to-r from-[#FF512F] to-[#F09819]" />
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-full blur-xl scale-75 bg-black" />
                       <div
-                        className="w-[75px] h-[75px] bg-gradient-to-br from-[#FF512F] via-[#F67C1B] to-[#F09819] group-hover:scale-110 transition-transform duration-300 relative z-10 drop-shadow-sm"
+                        className="w-[75px] h-[75px] bg-black group-hover:scale-110 transition-transform duration-300 relative z-10 drop-shadow-sm"
                         style={{
                           maskImage: `url(${logo})`,
                           WebkitMaskImage: `url(${logo})`,
