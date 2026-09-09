@@ -569,8 +569,6 @@ const Dashboard = () => {
                   (track as unknown as { problem_statements?: unknown[] })?.problem_statements?.length ??
                   detail?.problem_statements.length ??
                   0;
-                const accentColor = trackColors[track.name] || "#11152B";
-
                 return (
                   <div
                     key={track.name}
@@ -580,7 +578,7 @@ const Dashboard = () => {
                     {/* PS Count Badge */}
                     <div 
                       className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-[11px] font-bold shadow-md z-10"
-                      style={{ backgroundColor: accentColor }}
+                      style={{ backgroundColor: trackColors[track.name] || "#11152B" }}
                     >
                       {psCount}
                     </div>
@@ -588,7 +586,7 @@ const Dashboard = () => {
                     <div className="flex-1 flex items-center justify-center w-full relative my-2">
                       <div 
                         className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-full blur-xl scale-75"
-                        style={{ backgroundColor: accentColor }}
+                        style={{ backgroundColor: trackColors[track.name] || "#11152B" }}
                       />
                       <Image
                         src={logo}
