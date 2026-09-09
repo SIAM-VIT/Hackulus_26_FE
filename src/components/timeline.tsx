@@ -8,7 +8,6 @@ import {
   Lightbulb,
   Star,
   Utensils,
-  Mic,
   UtensilsCrossed,
   Code,
   Trophy,
