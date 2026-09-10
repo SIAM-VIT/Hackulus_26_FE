@@ -210,7 +210,7 @@ const Dashboard = () => {
     }
     if (windows?.review2) {
       return {
-        text: existingReview2Submission ? "Modify Final Project" : "Submit Final Project",
+        text: existingReview2Submission ? "Modify Review 2" : "Submit Review 2",
         action: "review2",
       };
     }
@@ -455,70 +455,70 @@ const Dashboard = () => {
             </div>
 
             {/* 2. CTA Card */}
-            <div className="bg-[#151932] rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden border border-white/5 flex flex-col justify-center">
+            <div className="bg-[#151932] rounded-3xl p-6 shadow-xl relative overflow-hidden border border-white/5 flex flex-col justify-center">
               {/* Glowing background effects */}
               <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
               <div className="absolute left-10 top-1/2 -translate-y-1/2 w-32 h-32 bg-[#F67C1B]/20 rounded-full blur-[60px]"></div>
 
-              <div className="flex flex-col sm:flex-row h-full items-center gap-6 relative z-10">
+              <div className="flex flex-col sm:flex-row h-full items-center gap-4 sm:gap-6 relative z-10">
                 {/* Left Graphic */}
-                <div className="w-full sm:w-1/2 flex items-center justify-center relative">
+                <div className="w-full sm:w-[38%] shrink-0 flex items-center justify-center relative">
                   <div className="relative">
                     <Image
                       src="/vector12.svg"
                       alt="Submission graphic"
-                      width={180}
-                      height={180}
-                      className="opacity-90 object-contain drop-shadow-2xl"
+                      width={150}
+                      height={150}
+                      className="opacity-90 object-contain drop-shadow-2xl max-w-[140px] sm:max-w-[160px]"
                     />
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_0_15px_rgba(246,124,27,0.8)]">
-                      <Lightbulb className="w-16 h-16 sm:w-20 sm:h-20 text-[#F67C1B] fill-[#F67C1B]/20" strokeWidth={1} />
+                      <Lightbulb className="w-14 h-14 sm:w-16 sm:h-16 text-[#F67C1B] fill-[#F67C1B]/20" strokeWidth={1} />
                     </div>
                   </div>
                 </div>
 
                 {/* Right Content */}
-                <div className="w-full sm:w-1/2 sm:pl-4 flex flex-col justify-center text-center sm:text-left">
-                  <h2 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold leading-[1.1] mb-4">
+                <div className="w-full sm:w-[62%] min-w-0 flex flex-col justify-center text-center sm:text-left">
+                  <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-bold leading-[1.15] mb-3">
                     Turn your ideas<br />into reality
                   </h2>
 
                   {/* Status badges */}
-                  <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start mb-4">
+                  <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start mb-3.5">
                     {dashboardData?.team?.problem_statement_id && (
-                      <div className="flex items-center gap-1.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 px-3 py-1 rounded-full font-bold text-xs">
+                      <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2.5 py-0.5 rounded-full font-bold text-[11px]">
                         <Lock className="w-3 h-3" />
                         Track & PS Locked
                       </div>
                     )}
                     {existingReview1Submission && (
-                      <div className="flex items-center gap-1.5 bg-[#4ADE80]/20 text-[#4ADE80] border border-[#4ADE80]/40 px-3 py-1 rounded-full font-bold text-xs shadow-[0_0_15px_rgba(74,222,128,0.2)]">
+                      <div className="flex items-center gap-1 bg-[#4ADE80]/20 text-[#4ADE80] border border-[#4ADE80]/40 px-2.5 py-0.5 rounded-full font-bold text-[11px] shadow-[0_0_15px_rgba(74,222,128,0.2)]">
                         <CheckCircle2 className="w-3 h-3 fill-current text-[#151932]" />
                         Review 1 Done
                       </div>
                     )}
                     {existingReview2Submission && (
-                      <div className="flex items-center gap-1.5 bg-purple-500/20 text-purple-300 border border-purple-500/40 px-3 py-1 rounded-full font-bold text-xs">
+                      <div className="flex items-center gap-1 bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2.5 py-0.5 rounded-full font-bold text-[11px]">
                         <CheckCircle2 className="w-3 h-3 fill-current text-[#151932]" />
-                        Final Done
+                        Review 2 Done
                       </div>
                     )}
                   </div>
 
-                  <div className="flex justify-center sm:justify-start">
+                  <div className="flex justify-center sm:justify-start w-full">
                     <Button
                       onClick={handleButtonClick}
                       disabled={buttonState.action === "closed" || buttonState.action === "eliminated"}
-                      className="group relative flex items-center justify-between w-full sm:w-[240px] bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white font-bold text-sm sm:text-base px-6 py-5 sm:py-6 rounded-full shadow-[0_8px_20px_rgba(246,124,27,0.3)] hover:shadow-[0_12px_25px_rgba(246,124,27,0.4)] transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
+                      className="group relative flex items-center justify-between w-full max-w-[240px] bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-4 sm:py-5 rounded-full shadow-[0_8px_20px_rgba(246,124,27,0.3)] hover:shadow-[0_12px_25px_rgba(246,124,27,0.4)] transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0 shrink-0"
                     >
-                      <span className="truncate pr-2">{buttonState.text}</span>
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
-                        <ArrowRight className="w-4 h-4 text-[#F67C1B] group-hover:translate-x-0.5 transition-transform" />
+                      <span className="truncate pr-2 font-bold">{buttonState.text}</span>
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 bg-white rounded-full flex items-center justify-center shadow-sm shrink-0">
+                        <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F67C1B] group-hover:translate-x-0.5 transition-transform" />
                       </div>
                     </Button>
                   </div>
                   {(buttonState.action === "closed" || buttonState.action === "eliminated") && (
-                    <span className="text-white/40 text-xs mt-2 block">
+                    <span className="text-white/40 text-[11px] mt-1.5 block">
                       {buttonState.action === "eliminated"
                         ? "Eliminated teams cannot submit."
                         : "Submissions are currently closed."}
