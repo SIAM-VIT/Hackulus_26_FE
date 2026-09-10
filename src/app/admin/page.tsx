@@ -101,6 +101,7 @@ const AdminDashboard = () => {
     useState<TeamDetails | null>(null);
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
   const [timelinePhase, setTimelinePhase] = useState("");
+  const [selectedRound, setSelectedRound] = useState<"review1" | "review2">("review1");
   const [scores, setScores] = useState<Record<string, number>>({});
   const [comments, setComments] = useState("");
   const [teamToEliminate, setTeamToEliminate] = useState<number | null>(null);
@@ -187,21 +188,26 @@ const AdminDashboard = () => {
     [teams]
   );
 
-
   const currentTotalScore = useMemo(() => {
     return Object.values(scores).reduce((sum, score) => sum + score, 0);
   }, [scores]);
 
-  const latestSubmission = useMemo(() => {
+  const review1Submission = useMemo(() => {
+    if (!selectedTeamDetails || !selectedTeamDetails.submissions?.length) return null;
+    return selectedTeamDetails.submissions.find((s) => s.type === "review1") || null;
+  }, [selectedTeamDetails]);
+
+  const review2Submission = useMemo(() => {
     if (!selectedTeamDetails || !selectedTeamDetails.submissions?.length) return null;
     return (
-      selectedTeamDetails.submissions.find((s) => s.type === "final") ||
-      selectedTeamDetails.submissions.find((s) => s.type === "review2") ||
-      selectedTeamDetails.submissions.find((s) => s.type === "review1") ||
-      selectedTeamDetails.submissions[0] || // fallback: any submission
+      selectedTeamDetails.submissions.find((s) => s.type === "review2" || s.type === "final") ||
       null
     );
   }, [selectedTeamDetails]);
+
+  const activeSubmission = useMemo(() => {
+    return selectedRound === "review1" ? review1Submission : review2Submission;
+  }, [selectedRound, review1Submission, review2Submission]);
 
   const problemStatementTitle = useMemo(() => {
     if (selectedTeamDetails?.problem_statement) {
@@ -233,7 +239,6 @@ const AdminDashboard = () => {
     }
     return null;
   }, [selectedTeamDetails]);
-
 
   const filteredTeams = useMemo(
     () =>
@@ -269,7 +274,16 @@ const AdminDashboard = () => {
       }
 
       if (timelineResult.status === "fulfilled") {
-        setTimelinePhase(timelineResult.value.data.currentPhase || "");
+        const phase = timelineResult.value.data.currentPhase || "";
+        setTimelinePhase(phase);
+        if (
+          phase.toLowerCase().includes("review 2") ||
+          phase.toLowerCase().includes("final")
+        ) {
+          setSelectedRound("review2");
+        } else {
+          setSelectedRound("review1");
+        }
       } else {
         // Non-critical for judges — silently ignore
         console.warn("Timeline fetch failed:", timelineResult.reason);
@@ -279,7 +293,6 @@ const AdminDashboard = () => {
     };
     fetchInitialData();
   }, []);
-
 
   useEffect(() => {
     if (selectedTeam) {
@@ -294,36 +307,6 @@ const AdminDashboard = () => {
           const { team, members, submissions } = response.data;
           const details = { ...team, members: members || team.members, submissions: submissions || team.submissions };
           setSelectedTeamDetails(details);
-          const latestSub =
-            details.submissions.find(
-              (s: { type: string }) => s.type === "final"
-            ) ||
-            details.submissions.find(
-              (s: { type: string }) => s.type === "review2"
-            ) ||
-            details.submissions.find(
-              (s: { type: string }) => s.type === "review1"
-            );
-          if (latestSub) {
-            api
-              .get(`/admin/submission/${latestSub.submission_id}`)
-              .then((res) => {
-                const currentUserReview = (res.data.reviews || []).find(
-                  (review: Review) => review.judge_id === user?.user_id
-                );
-                if (currentUserReview) {
-                  setPreviousReview(currentUserReview);
-                  setComments(currentUserReview.comments || "");
-                  // Pre-fill scores from previous review
-                  const prevScores: Record<string, number> = {};
-                  for (const cat of scoringCategories) {
-                    const val = currentUserReview[cat.key as keyof Review];
-                    if (typeof val === "number") prevScores[cat.key] = val;
-                  }
-                  setScores(prevScores);
-                }
-              });
-          }
         })
         .catch((error) => {
           toast.error("Failed to fetch team details.");
@@ -333,7 +316,43 @@ const AdminDashboard = () => {
           setIsDetailsLoading(false);
         });
     }
-  }, [selectedTeam, user]);
+  }, [selectedTeam]);
+
+  // Load scores for the selected round & judge whenever activeSubmission or user changes
+  useEffect(() => {
+    if (activeSubmission) {
+      api
+        .get(`/admin/submission/${activeSubmission.submission_id}`)
+        .then((res) => {
+          const currentUserReview = (res.data.reviews || []).find(
+            (review: Review) => review.judge_id === user?.user_id
+          );
+          if (currentUserReview) {
+            setPreviousReview(currentUserReview);
+            setComments(currentUserReview.comments || "");
+            const prevScores: Record<string, number> = {};
+            for (const cat of scoringCategories) {
+              const val = currentUserReview[cat.key as keyof Review];
+              if (typeof val === "number") prevScores[cat.key] = val;
+            }
+            setScores(prevScores);
+          } else {
+            setPreviousReview(null);
+            setComments("");
+            setScores({});
+          }
+        })
+        .catch(() => {
+          setPreviousReview(null);
+          setComments("");
+          setScores({});
+        });
+    } else {
+      setPreviousReview(null);
+      setComments("");
+      setScores({});
+    }
+  }, [activeSubmission, user]);
 
   const handleTimelineUpdate = async () => {
     try {
@@ -403,23 +422,24 @@ const AdminDashboard = () => {
 
   const handleScoreSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Use the latestSubmission computed value (finds review1 / review2 / final)
-    const latestSub = latestSubmission;
 
     if (!selectedTeam) {
       toast.error("Please select a team to judge.");
       return;
     }
 
-    if (!latestSub) {
-      toast.error("This team has no submission yet. The team must submit their idea first.");
+    if (!activeSubmission) {
+      toast.error(
+        `This team has not submitted their ${selectedRound === "review1" ? "Review 1" : "Review 2"} project details yet. Submissions are required before scoring.`
+      );
       return;
     }
 
     // Build payload matching backend ReviewCreateUpdate schema
     const payload = {
-      submission_id: latestSub.submission_id,
+      submission_id: activeSubmission.submission_id,
       team_id: selectedTeam.team_id,
+      review_round: selectedRound,
       innovation_score: scores["innovation_score"] || 0,
       technical_complexity_score: scores["technical_complexity_score"] || 0,
       feasibility_score: scores["feasibility_score"] || 0,
@@ -432,14 +452,19 @@ const AdminDashboard = () => {
     try {
       // Backend route: POST /reviews/submission/{submission_id}
       await api.post(
-        `/reviews/submission/${latestSub.submission_id}`,
+        `/reviews/submission/${activeSubmission.submission_id}`,
         payload
       );
       toast.success(
-        `Review submitted for ${selectedTeam.team_name} (Total: ${currentTotalScore})`
+        `${selectedRound === "review1" ? "Review 1" : "Review 2"} score submitted for ${selectedTeam.team_name} (Total: ${currentTotalScore}/100)`
       );
-      setSelectedTeam(null);
-      setSelectedTeamDetails(null);
+      
+      // Refresh team details to keep state in sync
+      if (selectedTeam) {
+        const res = await api.get(`/admin/team/${selectedTeam.team_id}`);
+        const { team, members, submissions } = res.data;
+        setSelectedTeamDetails({ ...team, members: members || team.members, submissions: submissions || team.submissions });
+      }
     } catch (error) {
       toast.error(
         //eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -689,7 +714,7 @@ const AdminDashboard = () => {
                 {/* Glowing bg effects */}
                 <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px]"></div>
                 
-                <div className="flex items-center justify-between mb-8 relative z-10">
+                <div className="flex items-center justify-between mb-6 relative z-10">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[#F67C1B] font-black text-xl italic">/</span>
@@ -716,62 +741,126 @@ const AdminDashboard = () => {
                   )}
                 </div>
 
-                {selectedTeam ? (
-                  <form onSubmit={handleScoreSubmit} className="relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
-                      {scoringCategories.map((category) => (
-                        <div key={category.key} className="bg-white/5 border border-white/10 rounded-xl p-3">
-                          <div className="flex items-center justify-between gap-1 mb-1.5">
-                            <label className="text-white/90 text-xs font-semibold uppercase tracking-wider block">
-                              {category.label}
-                            </label>
-                            <span className="text-[11px] font-bold text-[#F67C1B] bg-[#F67C1B]/15 px-2 py-0.5 rounded shrink-0">
-                              {category.weight} (0-{category.max})
-                            </span>
-                          </div>
-                          <Input
-                            type="number"
-                            min="0"
-                            max={category.max}
-                            step="0.5"
-                            placeholder={`0 - ${category.max}`}
-                            value={scores[category.key] ?? ""}
-                            onChange={(e) => handleScoreChange(category.key, e.target.value)}
-                            className="h-10 bg-black/20 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-[#F67C1B] rounded-lg text-sm font-semibold"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="mb-8">
-                      <label className="text-white/80 text-xs font-semibold block mb-1.5 uppercase tracking-wider">
-                        Comments
-                      </label>
-                      <Textarea
-                        value={comments}
-                        onChange={(e) => setComments(e.target.value)}
-                        placeholder="Provide feedback for the team..."
-                        className="bg-white/5 border-white/10 text-white focus-visible:ring-[#F67C1B] rounded-xl resize-none h-24"
-                      />
-                    </div>
+                {selectedTeam && (
+                  /* Segmented Round Switcher */
+                  <div className="flex items-center gap-2 p-1.5 bg-white/5 border border-white/10 rounded-2xl mb-6 relative z-10">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRound("review1")}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                        selectedRound === "review1"
+                          ? "bg-gradient-to-r from-[#FF512F] to-[#F09819] text-white shadow-md shadow-[#F09819]/25"
+                          : "text-white/60 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <span>Review 1</span>
+                      {review1Submission ? (
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                          ✓ Submitted
+                        </span>
+                      ) : (
+                        <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">
+                          ⏳ Pending
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedRound("review2")}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                        selectedRound === "review2"
+                          ? "bg-gradient-to-r from-[#FF512F] to-[#F09819] text-white shadow-md shadow-[#F09819]/25"
+                          : "text-white/60 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <span>Review 2 (Final)</span>
+                      {review2Submission ? (
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                          ✓ Submitted
+                        </span>
+                      ) : (
+                        <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">
+                          ⏳ Pending
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                )}
 
-                    <div className="flex items-center gap-4">
+                {selectedTeam ? (
+                  activeSubmission ? (
+                    <form onSubmit={handleScoreSubmit} className="relative z-10">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
+                        {scoringCategories.map((category) => (
+                          <div key={category.key} className="bg-white/5 border border-white/10 rounded-xl p-3">
+                            <div className="flex items-center justify-between gap-1 mb-1.5">
+                              <label className="text-white/90 text-xs font-semibold uppercase tracking-wider block">
+                                {category.label}
+                              </label>
+                              <span className="text-[11px] font-bold text-[#F67C1B] bg-[#F67C1B]/15 px-2 py-0.5 rounded shrink-0">
+                                {category.weight} (0-{category.max})
+                              </span>
+                            </div>
+                            <Input
+                              type="number"
+                              min="0"
+                              max={category.max}
+                              step="0.5"
+                              placeholder={`0 - ${category.max}`}
+                              value={scores[category.key] ?? ""}
+                              onChange={(e) => handleScoreChange(category.key, e.target.value)}
+                              className="h-10 bg-black/20 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-[#F67C1B] rounded-lg text-sm font-semibold"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="mb-8">
+                        <label className="text-white/80 text-xs font-semibold block mb-1.5 uppercase tracking-wider">
+                          Comments & Feedback ({selectedRound === "review1" ? "Review 1" : "Review 2"})
+                        </label>
+                        <Textarea
+                          value={comments}
+                          onChange={(e) => setComments(e.target.value)}
+                          placeholder="Provide constructive feedback for the team..."
+                          className="bg-white/5 border-white/10 text-white focus-visible:ring-[#F67C1B] rounded-xl resize-none h-24"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setSelectedTeam(null)}
+                          className="flex-1 border-white/20 text-white hover:bg-white/10 h-12 rounded-xl"
+                        >
+                          Clear Selection
+                        </Button>
+                        <Button
+                          type="submit"
+                          className="flex-1 bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white font-bold h-12 rounded-xl shadow-[0_4px_15px_rgba(246,124,27,0.3)] transition-all"
+                        >
+                          Submit {selectedRound === "review1" ? "Review 1" : "Review 2"} Score
+                        </Button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="py-8 px-6 bg-amber-500/10 border border-amber-500/25 rounded-2xl flex flex-col items-center justify-center text-center relative z-10">
+                      <AlertCircle className="w-10 h-10 text-amber-400 mb-3" />
+                      <h4 className="text-amber-300 font-bold text-base mb-1">
+                        {selectedRound === "review1" ? "Review 1" : "Review 2"} Submission Pending
+                      </h4>
+                      <p className="text-amber-200/75 text-xs sm:text-sm max-w-md leading-relaxed mb-4">
+                        The team <strong className="text-white">{selectedTeam.team_name}</strong> has not submitted their {selectedRound === "review1" ? "Review 1" : "Review 2 (Final)"} project details yet. Participants must submit their project from the participant portal before marks can be awarded.
+                      </p>
                       <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setSelectedTeam(null)}
-                        className="flex-1 border-white/20 text-white hover:bg-white/10 h-12 rounded-xl"
+                        disabled
+                        className="bg-white/10 text-white/40 border border-white/10 cursor-not-allowed font-medium text-xs px-6 py-2.5 rounded-xl"
                       >
-                        Clear Selection
-                      </Button>
-                      <Button
-                        type="submit"
-                        className="flex-1 bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white font-bold h-12 rounded-xl shadow-[0_4px_15px_rgba(246,124,27,0.3)] transition-all"
-                      >
-                        Submit Score
+                        Awaiting {selectedRound === "review1" ? "Review 1" : "Review 2"} Submission
                       </Button>
                     </div>
-                  </form>
+                  )
                 ) : (
                   <div className="py-12 flex flex-col items-center justify-center text-center opacity-60 border-2 border-dashed border-white/10 rounded-2xl">
                     <Edit2 className="w-12 h-12 text-white/30 mb-4" />
@@ -783,11 +872,20 @@ const AdminDashboard = () => {
               {/* Project Details Card */}
               {selectedTeam && (
                 <div className="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 relative overflow-hidden">
-                  <div className="flex items-center gap-2 mb-6">
-                    <span className="text-[#F67C1B] font-black text-xl italic">/</span>
-                    <h3 className="text-[#11152B] text-xl font-bold tracking-wide">
-                      Project Details
-                    </h3>
+                  <div className="flex items-center justify-between gap-2 mb-6">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#F67C1B] font-black text-xl italic">/</span>
+                      <h3 className="text-[#11152B] text-xl font-bold tracking-wide">
+                        {selectedRound === "review1" ? "Review 1 Details" : "Review 2 Details"}
+                      </h3>
+                    </div>
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${
+                      activeSubmission
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        : "bg-amber-50 text-amber-700 border-amber-200"
+                    }`}>
+                      {activeSubmission ? "Submitted" : "Pending Submission"}
+                    </span>
                   </div>
 
                   {isDetailsLoading ? (
@@ -804,9 +902,13 @@ const AdminDashboard = () => {
                            </div>
                         </div>
                         <div>
-                           <label className="text-gray-500 text-xs font-semibold uppercase tracking-wider block mb-1">Idea / Project Title</label>
+                           <label className="text-gray-500 text-xs font-semibold uppercase tracking-wider block mb-1">
+                             {selectedRound === "review1" ? "Review 1 Title" : "Review 2 Title"}
+                           </label>
                            <div className="bg-gray-50 border border-gray-100 p-3 rounded-xl text-sm font-medium text-gray-800 truncate">
-                             {latestSubmission?.title || "Pending submission"}
+                             {activeSubmission?.title || (
+                               <span className="text-gray-400 italic">Pending submission</span>
+                             )}
                            </div>
                         </div>
                       </div>
@@ -837,11 +939,11 @@ const AdminDashboard = () => {
 
                       <div>
                         <label className="text-gray-500 text-xs font-semibold uppercase tracking-wider block mb-1">
-                          {latestSubmission?.description ? "Submission Description" : "Description"}
+                          {activeSubmission?.description ? "Submission Description" : "Description"}
                         </label>
                         <div className="bg-gray-50 border border-gray-100 p-3 rounded-xl text-sm text-gray-700 min-h-[70px] whitespace-pre-wrap">
-                           {latestSubmission?.description || (
-                             <span className="text-gray-400 italic">No submission description provided yet.</span>
+                           {activeSubmission?.description || (
+                             <span className="text-gray-400 italic">No {selectedRound === "review1" ? "Review 1" : "Review 2"} description provided yet.</span>
                            )}
                         </div>
                       </div>
@@ -851,33 +953,33 @@ const AdminDashboard = () => {
                           {
                             name: "GitHub",
                             url:
-                              latestSubmission?.links?.github ||
-                              latestSubmission?.links?.github_link ||
-                              latestSubmission?.links?.repo ||
-                              (latestSubmission as unknown as { github_link?: string })?.github_link,
+                              activeSubmission?.links?.github ||
+                              activeSubmission?.links?.github_link ||
+                              activeSubmission?.links?.repo ||
+                              (activeSubmission as unknown as { github_link?: string })?.github_link,
                           },
                           {
                             name: "Presentation",
                             url:
-                              latestSubmission?.links?.presentation ||
-                              latestSubmission?.links?.presentation_link ||
-                              latestSubmission?.links?.ppt ||
-                              latestSubmission?.links?.ppt_link,
+                              activeSubmission?.links?.presentation ||
+                              activeSubmission?.links?.presentation_link ||
+                              activeSubmission?.links?.ppt ||
+                              activeSubmission?.links?.ppt_link,
                           },
                           {
-                            name: "Demo / Live",
+                            name: "Live / Deployed",
                             url:
-                              latestSubmission?.links?.live_url ||
-                              latestSubmission?.links?.demo ||
-                              latestSubmission?.links?.demo_link ||
-                              latestSubmission?.links?.video ||
-                              latestSubmission?.links?.video_link,
+                              activeSubmission?.links?.live_url ||
+                              activeSubmission?.links?.demo ||
+                              activeSubmission?.links?.demo_link ||
+                              activeSubmission?.links?.video ||
+                              activeSubmission?.links?.video_link,
                           },
                           {
                             name: "Figma",
                             url:
-                              latestSubmission?.links?.figma ||
-                              latestSubmission?.links?.figma_link,
+                              activeSubmission?.links?.figma ||
+                              activeSubmission?.links?.figma_link,
                           },
                         ].map(({ name, url }) => {
                           const hasLink = Boolean(url && url !== "N/A" && typeof url === "string" && url.trim().length > 0);
