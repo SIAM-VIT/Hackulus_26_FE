@@ -13,6 +13,8 @@ export interface LeaderboardEntry {
   status: string;
   track_name: string;
   reviews_count: number;
+  review1_score?: number;
+  review2_score?: number;
   total_score: number;
   scores_breakdown: {
     innovation: number;
@@ -119,7 +121,7 @@ export default function LeaderboardModal({ onClose, isAdmin }: LeaderboardModalP
                       : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"
                   }`}
                 >
-                  {round === "all" ? "All Rounds" : round === "review1" ? "Review 1" : "Review 2"}
+                  {round === "all" ? "All Rounds (R1 + R2)" : round === "review1" ? "Review 1" : "Review 2"}
                 </Button>
               ))}
             </div>
@@ -143,13 +145,19 @@ export default function LeaderboardModal({ onClose, isAdmin }: LeaderboardModalP
                     <th className="py-3 px-4">Team</th>
                     <th className="py-3 px-4">Track</th>
                     <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4 text-right">Total Score</th>
+                    {roundFilter === "all" && (
+                      <>
+                        <th className="py-3 px-3 text-center">Review 1</th>
+                        <th className="py-3 px-3 text-center">Review 2</th>
+                      </>
+                    )}
+                    <th className="py-3 px-4 text-right">
+                      {roundFilter === "all" ? "Total (R1 + R2)" : "Score"}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {filtered.map((entry, idx) => {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const isTop3 = idx < 3;
                     return (
                       <tr
                         key={entry.team_id}
@@ -201,6 +209,16 @@ export default function LeaderboardModal({ onClose, isAdmin }: LeaderboardModalP
                             {entry.status}
                           </span>
                         </td>
+                        {roundFilter === "all" && (
+                          <>
+                            <td className="py-3.5 px-3 text-center font-medium text-white/80">
+                              {entry.review1_score ?? 0}
+                            </td>
+                            <td className="py-3.5 px-3 text-center font-medium text-white/80">
+                              {entry.review2_score ?? 0}
+                            </td>
+                          </>
+                        )}
                         <td className="py-3.5 px-4 text-right font-black text-lg text-[#F67C1B]">
                           {entry.total_score}
                         </td>
@@ -214,6 +232,5 @@ export default function LeaderboardModal({ onClose, isAdmin }: LeaderboardModalP
 
         </div>
       </div>
-    </motion.div>
   );
 }
