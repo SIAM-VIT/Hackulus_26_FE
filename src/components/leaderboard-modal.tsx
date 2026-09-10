@@ -232,5 +232,6 @@ export default function LeaderboardModal({ onClose, isAdmin }: LeaderboardModalP
 
         </div>
       </div>
+    </motion.div>
   );
 }
