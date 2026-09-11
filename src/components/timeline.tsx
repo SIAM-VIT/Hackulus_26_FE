@@ -20,7 +20,7 @@ import {
 const HACKATHON_PHASES = [
   "Participants Reach",
   "Ideation",
-  "Review 0",
+  "Track and Problem Statement submission",
   "Lunch",
   "Begin Hacking",
   "Review 1",
@@ -33,6 +33,7 @@ const HACKATHON_PHASES = [
 const PHASE_ICONS: Record<string, React.ReactNode> = {
   "Participants Reach": <Users className="w-3.5 h-3.5" />,
   "Ideation": <Lightbulb className="w-3.5 h-3.5" />,
+  "Track and Problem Statement submission": <Star className="w-3.5 h-3.5" />,
   "Review 0": <Star className="w-3.5 h-3.5" />,
   "Lunch": <Utensils className="w-3.5 h-3.5" />,
   "Begin Hacking": <Code className="w-3.5 h-3.5" />,
@@ -53,12 +54,25 @@ export default function Timeline({ currentPhase, teamName, onClose, className = 
   const { logout, user } = useAuth();
   
   // Normalize string for matching just in case
-  const normalizedCurrentPhase = currentPhase.toLowerCase();
-  const currentIndex = HACKATHON_PHASES.findIndex(
+  const normalizedCurrentPhase = (currentPhase || "").toLowerCase().trim();
+  let matchedIndex = HACKATHON_PHASES.findIndex(
     (p) => p.toLowerCase() === normalizedCurrentPhase
-  ) === -1 ? 2 : HACKATHON_PHASES.findIndex(
-    (p) => p.toLowerCase() === normalizedCurrentPhase
-  ); // default to Review 1 for demo if missing
+  );
+  if (matchedIndex === -1) {
+    if (
+      normalizedCurrentPhase.includes("review 0") ||
+      normalizedCurrentPhase.includes("review0") ||
+      normalizedCurrentPhase.includes("track and problem") ||
+      normalizedCurrentPhase.includes("problem statement")
+    ) {
+      matchedIndex = HACKATHON_PHASES.findIndex(
+        (p) =>
+          p.toLowerCase().includes("track and problem") ||
+          p.toLowerCase().includes("review 0")
+      );
+    }
+  }
+  const currentIndex = matchedIndex === -1 ? 2 : matchedIndex;
 
   const getInitials = (name: string) =>
     name
@@ -166,7 +180,7 @@ export default function Timeline({ currentPhase, teamName, onClose, className = 
                     : "text-white/40 hover:text-white/70 hover:bg-white/5 font-normal"
                 }`}
               >
-                <span className="truncate">{phase}</span>
+                <span className="leading-tight break-words">{phase}</span>
                 
                 {isCurrent && (
                   <span className="text-[10px] font-bold text-white bg-black/30 border border-white/20 px-1.5 py-0.5 rounded uppercase tracking-wider flex-shrink-0 animate-pulse">
