@@ -25,6 +25,7 @@ import {
   AlertTriangle,
   Lock,
   Menu,
+  Users,
 } from "lucide-react";
 
 interface Member {
@@ -198,7 +199,7 @@ const Dashboard = () => {
     if (windows?.review0) {
       const hasPs = !!dashboardData?.team?.problem_statement_id;
       return {
-        text: hasPs ? "Review 0: Change PS" : "Review 0: Select PS",
+        text: hasPs ? "Change Track & PS" : "Select Track & PS",
         action: "review0",
       };
     }
@@ -389,13 +390,16 @@ const Dashboard = () => {
               </div>
 
               {/* Card Body */}
-              <div className="flex flex-col sm:flex-row gap-6 h-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 h-full">
                 {/* Left side: Track & Problem Statement Details */}
-                <div className="w-full sm:w-[45%] flex flex-col justify-between bg-[#1C213F] rounded-2xl p-4 sm:p-5 border border-white/5">
+                <div className="flex flex-col justify-between bg-[#1C213F] rounded-2xl p-4 sm:p-5 border border-white/5">
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
                       <span className="px-3 py-1 bg-[#F67C1B]/15 border border-[#F67C1B]/40 text-[#F67C1B] rounded-lg text-xs font-bold uppercase tracking-wider">
                         {dashboardData?.team?.track_name || "No Track Selected"}
+                      </span>
+                      <span className="text-[11px] font-semibold text-[#F67C1B] bg-[#F67C1B]/10 px-2.5 py-0.5 rounded-full border border-[#F67C1B]/20">
+                        Active Squad
                       </span>
                     </div>
 
@@ -403,52 +407,66 @@ const Dashboard = () => {
                       <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider block">
                         Chosen Problem Statement
                       </span>
-                      <p className="text-white font-semibold text-sm leading-snug">
+                      <p className="text-white font-semibold text-sm sm:text-base leading-snug line-clamp-3">
                         {dashboardData?.team?.problem_statement?.title || "No Problem Statement Selected"}
                       </p>
                     </div>
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
-                    <span>{sortedMembers.length} {sortedMembers.length === 1 ? "Member" : "Members"}</span>
-                    <span className="text-[#F67C1B] font-semibold">Active Squad</span>
+                    <span className="flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-[#F67C1B]" />
+                      <span className="text-white/80 font-medium">
+                        {sortedMembers.length} {sortedMembers.length === 1 ? "Member" : "Members"}
+                      </span>
+                    </span>
+                    <span className="text-[11px] text-white/40">
+                      ID: #{dashboardData?.team?.id || dashboardData?.team?.team_id || "N/A"}
+                    </span>
                   </div>
                 </div>
 
                 {/* Right side: Member list */}
-                <div className="w-full sm:w-[55%] space-y-2">
+                <div className="flex flex-col justify-start space-y-2">
+                  <div className="text-[11px] font-bold text-white/40 uppercase tracking-wider px-1">
+                    Team Members ({sortedMembers.length})
+                  </div>
                   {sortedMembers.length > 0 ? (
-                    sortedMembers.map((member) => {
-                      const isCurrentUser = member.user_id === user?.user_id;
-                      return (
-                        <div
-                          key={member.user_id}
-                          className="bg-[#1C213F] rounded-xl p-3 px-4 flex items-center justify-between border border-white/5"
-                        >
-                          <div className="flex items-center gap-3 truncate">
-                            <div className="text-white/50 bg-white/5 p-1.5 rounded-full flex-shrink-0">
-                              <User className="w-4 h-4" />
-                            </div>
-                            <span className="text-white text-sm font-semibold truncate">
-                              {member.name}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            {member.is_leader && (
-                              <span className="text-[#F67C1B] text-[10px] font-bold">Leader</span>
-                            )}
-                            {isCurrentUser && (
-                              <div className="bg-[#F67C1B] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm shadow-[#F67C1B]/50">
-                                You
+                    <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full">
+                      {sortedMembers.map((member) => {
+                        const isCurrentUser = member.user_id === user?.user_id;
+                        return (
+                          <div
+                            key={member.user_id}
+                            className="bg-[#1C213F] rounded-xl p-2.5 sm:p-3 px-3.5 flex items-center justify-between gap-2 border border-white/5 hover:border-white/10 transition-colors"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="text-[#F67C1B] bg-[#F67C1B]/10 border border-[#F67C1B]/20 p-1.5 rounded-lg flex-shrink-0">
+                                <User className="w-3.5 h-3.5" />
                               </div>
-                            )}
+                              <span className="text-white text-xs sm:text-sm font-semibold truncate" title={member.name}>
+                                {member.name}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              {member.is_leader && (
+                                <span className="text-[#F67C1B] text-[10px] font-bold bg-[#F67C1B]/10 border border-[#F67C1B]/20 px-2 py-0.5 rounded-full">
+                                  Leader
+                                </span>
+                              )}
+                              {isCurrentUser && (
+                                <div className="bg-gradient-to-r from-[#FF512F] to-[#F09819] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm shadow-[#F67C1B]/50">
+                                  You
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })
+                        );
+                      })}
+                    </div>
                   ) : (
-                    <div className="text-white/50 text-sm italic">No team members yet.</div>
+                    <div className="text-white/50 text-sm italic bg-[#1C213F] p-4 rounded-xl">No team members yet.</div>
                   )}
                 </div>
               </div>

@@ -214,7 +214,6 @@ export default function Timeline({ currentPhase, teamName, onClose, className = 
               </span>
             </div>
           </div>
-          <ChevronDown className="w-4 h-4 flex-shrink-0 text-white/50 group-hover:text-white transition-colors" />
         </div>
 
         {/* Sign Out Button */}
