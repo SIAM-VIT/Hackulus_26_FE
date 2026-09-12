@@ -36,6 +36,7 @@ interface Member {
 
 interface Team {
   team_id: number;
+  id?: number;
   team_name: string;
   track_id?: number;
   track_name?: string;
@@ -436,7 +437,7 @@ const Dashboard = () => {
                       </span>
                     </span>
                     <span className="text-[11px] text-white/40">
-                      ID: #{dashboardData?.team?.id || dashboardData?.team?.team_id || "N/A"}
+                      ID: #{dashboardData?.team?.team_id || "N/A"}
                     </span>
                   </div>
                 </div>
