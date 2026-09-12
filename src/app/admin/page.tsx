@@ -192,6 +192,11 @@ const AdminDashboard = () => {
     return Object.values(scores).reduce((sum, score) => sum + score, 0);
   }, [scores]);
 
+  const review0Submission = useMemo(() => {
+    if (!selectedTeamDetails || !selectedTeamDetails.submissions?.length) return null;
+    return selectedTeamDetails.submissions.find((s) => s.type === "review0") || null;
+  }, [selectedTeamDetails]);
+
   const review1Submission = useMemo(() => {
     if (!selectedTeamDetails || !selectedTeamDetails.submissions?.length) return null;
     return selectedTeamDetails.submissions.find((s) => s.type === "review1") || null;
@@ -208,6 +213,18 @@ const AdminDashboard = () => {
   const activeSubmission = useMemo(() => {
     return selectedRound === "review1" ? review1Submission : review2Submission;
   }, [selectedRound, review1Submission, review2Submission]);
+
+  const presentationLink = useMemo(() => {
+    const raw =
+      activeSubmission?.links?.presentation ||
+      activeSubmission?.links?.presentation_link ||
+      activeSubmission?.links?.ppt ||
+      activeSubmission?.links?.ppt_link ||
+      review0Submission?.links?.presentation ||
+      review0Submission?.links?.ppt ||
+      review0Submission?.links?.ppt_link;
+    return raw && typeof raw === "string" && raw.trim().length > 0 ? raw.trim() : null;
+  }, [activeSubmission, review0Submission]);
 
   const problemStatementTitle = useMemo(() => {
     if (selectedTeamDetails?.problem_statement) {
@@ -894,6 +911,57 @@ const AdminDashboard = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
+                      {/* Review 0 Overview Card */}
+                      <div className="bg-[#151932] text-white p-4 sm:p-5 rounded-2xl border border-white/10 shadow-sm relative overflow-hidden">
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[#F67C1B] font-bold text-sm uppercase tracking-wider">Review 0 Overview</span>
+                          </div>
+                          <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                            review0Submission || selectedTeamDetails?.problem_statement_id
+                              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                              : "bg-amber-500/20 text-amber-300 border-amber-500/30"
+                          }`}>
+                            {review0Submission || selectedTeamDetails?.problem_statement_id ? "✓ Review 0 Submitted" : "⏳ Pending"}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm mb-3">
+                          <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+                            <span className="text-[10px] text-white/50 uppercase font-semibold block mb-0.5">Project Title</span>
+                            <span className="font-bold text-white text-sm truncate block">
+                              {review0Submission?.title || activeSubmission?.title || "Not specified yet"}
+                            </span>
+                          </div>
+
+                          <div className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <span className="text-[10px] text-white/50 uppercase font-semibold block mb-0.5">Presentation (PPT)</span>
+                              <span className="text-xs text-white/80 truncate block">
+                                {presentationLink ? "Pitch Deck Attached" : "No link submitted"}
+                              </span>
+                            </div>
+                            {presentationLink && (
+                              <a
+                                href={presentationLink.startsWith("http") ? presentationLink : `https://${presentationLink}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-sm shrink-0"
+                              >
+                                View PPT ↗
+                              </a>
+                            )}
+                          </div>
+                        </div>
+
+                        {review0Submission?.description && (
+                          <div className="bg-white/5 border border-white/10 p-3 rounded-xl text-xs text-white/80">
+                            <span className="text-[10px] text-white/50 uppercase font-semibold block mb-1">Approach / Notes</span>
+                            <p className="leading-relaxed">{review0Submission.description}</p>
+                          </div>
+                        )}
+                      </div>
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                            <label className="text-gray-500 text-xs font-semibold uppercase tracking-wider block mb-1">Track</label>
@@ -906,7 +974,7 @@ const AdminDashboard = () => {
                              {selectedRound === "review1" ? "Review 1 Title" : "Review 2 Title"}
                            </label>
                            <div className="bg-gray-50 border border-gray-100 p-3 rounded-xl text-sm font-medium text-gray-800 truncate">
-                             {activeSubmission?.title || (
+                             {activeSubmission?.title || review0Submission?.title || (
                                <span className="text-gray-400 italic">Pending submission</span>
                              )}
                            </div>
@@ -960,11 +1028,7 @@ const AdminDashboard = () => {
                           },
                           {
                             name: "Presentation",
-                            url:
-                              activeSubmission?.links?.presentation ||
-                              activeSubmission?.links?.presentation_link ||
-                              activeSubmission?.links?.ppt ||
-                              activeSubmission?.links?.ppt_link,
+                            url: presentationLink,
                           },
                           {
                             name: "Live / Deployed",
@@ -979,7 +1043,8 @@ const AdminDashboard = () => {
                             name: "Figma",
                             url:
                               activeSubmission?.links?.figma ||
-                              activeSubmission?.links?.figma_link,
+                              activeSubmission?.links?.figma_link ||
+                              review0Submission?.links?.figma,
                           },
                         ].map(({ name, url }) => {
                           const hasLink = Boolean(url && url !== "N/A" && typeof url === "string" && url.trim().length > 0);
