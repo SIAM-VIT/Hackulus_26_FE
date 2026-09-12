@@ -72,7 +72,7 @@ interface Review {
 const hackathonPhases = [
   "Participants Reach",
   "Ideation",
-  "Track and Problem Statement submission",
+  "Review 0",
   "Lunch",
   "Begin Hacking",
   "Review 1",
