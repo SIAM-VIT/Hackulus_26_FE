@@ -34,44 +34,27 @@ export default function ProjectSubmissionForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isReview2) {
-      if (!formData.title.trim()) {
-        toast.error("Project Title is required.");
-        return;
-      }
-      if (!formData.description.trim()) {
-        toast.error("Project Description is required.");
-        return;
-      }
-      if (!formData.github_link.trim()) {
-        toast.error("GitHub link is required.");
-        return;
-      }
-      if (!formData.ppt_link.trim()) {
-        toast.error("Presentation / PPT link is required.");
-        return;
-      }
-    } else {
-      if (!formData.live_url.trim()) {
-        toast.error("Live deployed link is required.");
-        return;
-      }
+    if (!formData.github_link.trim()) {
+      toast.error("GitHub repository link is required.");
+      return;
+    }
+    if (!formData.figma_link.trim()) {
+      toast.error("Figma design link is required.");
+      return;
     }
 
     setIsSubmitting(true);
     try {
       if (!isReview2) {
         await api.post("/users/review1", {
-          title: formData.title.trim(),
-          description: formData.description.trim(),
           github_link: formData.github_link.trim(),
-          ppt_link: formData.ppt_link.trim(),
-          figma_link: formData.figma_link.trim() || undefined,
+          figma_link: formData.figma_link.trim(),
         });
       } else {
         await api.post("/users/review2", {
-          live_url: formData.live_url.trim(),
-          figma_link: formData.figma_link.trim() || undefined,
+          github_link: formData.github_link.trim(),
+          figma_link: formData.figma_link.trim(),
+          live_url: formData.live_url.trim() || undefined,
         });
       }
       toast.success(`${reviewStage} submitted successfully!`);
@@ -113,113 +96,50 @@ export default function ProjectSubmissionForm({
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isReview2 ? (
-              <>
-                <div>
-                  <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
-                    <span>Project Title</span>
-                    <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
-                  </label>
-                  <Input
-                    type="text"
-                    required
-                    placeholder="Enter project title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
-                  />
-                </div>
+            <div>
+              <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
+                <span>GitHub Repository Link</span>
+                <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
+              </label>
+              <Input
+                type="url"
+                required
+                placeholder="https://github.com/your-team/repo"
+                value={formData.github_link}
+                onChange={(e) => setFormData({ ...formData, github_link: e.target.value })}
+                className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
+              />
+            </div>
 
-                <div>
-                  <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
-                    <span>Description</span>
-                    <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
-                  </label>
-                  <Input
-                    type="text"
-                    required
-                    placeholder="Brief description of progress / solution"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
-                  />
-                </div>
+            <div>
+              <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
+                <span>Figma Design Link</span>
+                <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
+              </label>
+              <Input
+                type="url"
+                required
+                placeholder="https://www.figma.com/design/..."
+                value={formData.figma_link}
+                onChange={(e) => setFormData({ ...formData, figma_link: e.target.value })}
+                className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
+              />
+            </div>
 
-                <div>
-                  <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
-                    <span>GitHub Repository Link</span>
-                    <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
-                  </label>
-                  <Input
-                    type="url"
-                    required
-                    placeholder="https://github.com/your-team/repo"
-                    value={formData.github_link}
-                    onChange={(e) => setFormData({ ...formData, github_link: e.target.value })}
-                    className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
-                    <span>Presentation / PPT Link</span>
-                    <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
-                  </label>
-                  <Input
-                    type="url"
-                    required
-                    placeholder="https://docs.google.com/presentation/d/..."
-                    value={formData.ppt_link}
-                    onChange={(e) => setFormData({ ...formData, ppt_link: e.target.value })}
-                    className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
-                    <span>Figma Design Link</span>
-                    <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">Optional</span>
-                  </label>
-                  <Input
-                    type="url"
-                    placeholder="https://www.figma.com/design/..."
-                    value={formData.figma_link}
-                    onChange={(e) => setFormData({ ...formData, figma_link: e.target.value })}
-                    className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
-                    <span>Live Deployed Link</span>
-                    <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
-                  </label>
-                  <Input
-                    type="url"
-                    required
-                    placeholder="https://your-deployed-app.vercel.app"
-                    value={formData.live_url}
-                    onChange={(e) => setFormData({ ...formData, live_url: e.target.value })}
-                    className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
-                    <span>Figma Design Link</span>
-                    <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">Optional</span>
-                  </label>
-                  <Input
-                    type="url"
-                    placeholder="https://www.figma.com/design/..."
-                    value={formData.figma_link}
-                    onChange={(e) => setFormData({ ...formData, figma_link: e.target.value })}
-                    className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
-                  />
-                </div>
-              </>
+            {isReview2 && (
+              <div>
+                <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
+                  <span>Live Deployed / Demo Link</span>
+                  <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">Optional</span>
+                </label>
+                <Input
+                  type="url"
+                  placeholder="https://your-deployed-app.vercel.app"
+                  value={formData.live_url}
+                  onChange={(e) => setFormData({ ...formData, live_url: e.target.value })}
+                  className="w-full bg-white text-black border-2 border-black rounded-lg px-4 py-2.5 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-300"
+                />
+              </div>
             )}
 
             <div className="flex items-center justify-between pt-4">
@@ -232,7 +152,7 @@ export default function ProjectSubmissionForm({
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !formData.github_link.trim() || !formData.figma_link.trim()}
                 className="text-3xl border-r-4 border-b-4 border-black bg-white text-gray-800 p-5 rounded-lg font-medium hover:bg-gray-100"
               >
                 {isSubmitting ? "Submitting..." : "Submit"}

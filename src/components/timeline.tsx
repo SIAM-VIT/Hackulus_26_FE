@@ -20,7 +20,7 @@ import {
 const HACKATHON_PHASES = [
   "Participants Reach",
   "Ideation",
-  "Track and Problem Statement submission",
+  "Review 0",
   "Lunch",
   "Begin Hacking",
   "Review 1",
@@ -33,7 +33,6 @@ const HACKATHON_PHASES = [
 const PHASE_ICONS: Record<string, React.ReactNode> = {
   "Participants Reach": <Users className="w-3.5 h-3.5" />,
   "Ideation": <Lightbulb className="w-3.5 h-3.5" />,
-  "Track and Problem Statement submission": <Star className="w-3.5 h-3.5" />,
   "Review 0": <Star className="w-3.5 h-3.5" />,
   "Lunch": <Utensils className="w-3.5 h-3.5" />,
   "Begin Hacking": <Code className="w-3.5 h-3.5" />,

@@ -121,6 +121,11 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  const existingReview0Submission = useMemo(
+    () => submissions.find((s) => s.type === "review0"),
+    [submissions]
+  );
+
   const existingReview1Submission = useMemo(
     () => submissions.find((s) => s.type === "review1"),
     [submissions]
@@ -197,9 +202,9 @@ const Dashboard = () => {
 
     const { windows } = dashboardData || {};
     if (windows?.review0) {
-      const hasPs = !!dashboardData?.team?.problem_statement_id;
+      const hasR0 = !!existingReview0Submission || !!dashboardData?.team?.problem_statement_id;
       return {
-        text: hasPs ? "Change Track & PS" : "Select Track & PS",
+        text: hasR0 ? "Modify Review 0" : "Submit Review 0",
         action: "review0",
       };
     }
@@ -381,10 +386,10 @@ const Dashboard = () => {
                   <button
                     onClick={() => setIsReview0ModalOpen(true)}
                     className="text-white/60 hover:text-[#F67C1B] transition-colors flex items-center gap-1.5 text-xs bg-white/5 px-2.5 py-1 rounded-full border border-white/10"
-                    title="Change Track & Problem Statement"
+                    title="Edit Review 0 Submission"
                   >
                     <Edit2 className="w-3 h-3" />
-                    <span>Change PS</span>
+                    <span>Edit Review 0</span>
                   </button>
                 )}
               </div>
@@ -407,10 +412,21 @@ const Dashboard = () => {
                       <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider block">
                         Chosen Problem Statement
                       </span>
-                      <p className="text-white font-semibold text-sm sm:text-base leading-snug line-clamp-3">
+                      <p className="text-white font-semibold text-sm sm:text-base leading-snug line-clamp-2">
                         {dashboardData?.team?.problem_statement?.title || "No Problem Statement Selected"}
                       </p>
                     </div>
+
+                    {existingReview0Submission?.title && (
+                      <div className="space-y-0.5 pt-1 border-t border-white/5">
+                        <span className="text-white/40 text-[10px] font-semibold uppercase tracking-wider block">
+                          Project Title
+                        </span>
+                        <p className="text-[#F67C1B] font-bold text-xs sm:text-sm truncate">
+                          {existingReview0Submission.title}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
@@ -503,10 +519,10 @@ const Dashboard = () => {
 
                   {/* Status badges */}
                   <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start mb-3.5">
-                    {dashboardData?.team?.problem_statement_id && (
+                    {(existingReview0Submission || dashboardData?.team?.problem_statement_id) && (
                       <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 border border-blue-500/40 px-2.5 py-0.5 rounded-full font-bold text-[11px]">
-                        <Lock className="w-3 h-3" />
-                        Track & PS Locked
+                        <CheckCircle2 className="w-3 h-3 fill-current text-[#151932]" />
+                        Review 0 Done
                       </div>
                     )}
                     {existingReview1Submission && (
@@ -662,6 +678,13 @@ const Dashboard = () => {
                 onSuccess={fetchDashboardData}
                 currentTrackId={dashboardData?.team?.track_id}
                 currentProblemStatementId={dashboardData?.team?.problem_statement_id}
+                currentTitle={existingReview0Submission?.title || ""}
+                currentPptLink={
+                  existingReview0Submission?.links?.ppt ||
+                  existingReview0Submission?.links?.presentation ||
+                  ""
+                }
+                currentDescription={existingReview0Submission?.description || ""}
               />
             </div>
           </>
