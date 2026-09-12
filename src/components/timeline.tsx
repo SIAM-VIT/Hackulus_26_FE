@@ -12,7 +12,6 @@ import {
   Code,
   Trophy,
   Power,
-  ChevronDown,
   X,
   Check,
 } from "lucide-react";

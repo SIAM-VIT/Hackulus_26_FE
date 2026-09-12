@@ -23,7 +23,6 @@ import {
   ArrowRight,
   Lightbulb,
   AlertTriangle,
-  Lock,
   Menu,
   Users,
 } from "lucide-react";
