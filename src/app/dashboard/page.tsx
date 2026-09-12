@@ -589,8 +589,6 @@ const Dashboard = () => {
                   (track as unknown as { problem_statements?: unknown[] })?.problem_statements?.length ??
                   detail?.problem_statements.length ??
                   0;
-                const accentColor = trackColors[track.name] || "#11152B";
-
                 return (
                   <div
                     key={track.name}
