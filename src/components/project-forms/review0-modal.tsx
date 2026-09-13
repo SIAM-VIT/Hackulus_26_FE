@@ -15,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle2, Lock } from "lucide-react";
+import { CheckCircle2, Lock, AlertTriangle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TrackItem {
   track_id: number;
@@ -49,6 +50,7 @@ export default function Review0Modal({
   currentPptLink = "",
   currentDescription = "",
 }: Review0ModalProps) {
+  const { user } = useAuth();
   const [tracks, setTracks] = useState<TrackItem[]>([]);
   const [selectedTrackId, setSelectedTrackId] = useState<number | null>(
     currentTrackId || 1
@@ -127,6 +129,10 @@ export default function Review0Modal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.is_leader) {
+      toast.error("Only the team leader can fill and submit Review 0.");
+      return;
+    }
     if (!selectedTrackId || !selectedPsId) {
       toast.error("Please select both a track and a problem statement.");
       return;
@@ -177,9 +183,15 @@ export default function Review0Modal({
               <Lock className="w-6 h-6 text-[#F67C1B]" />
               <h1 className="text-3xl sm:text-4xl font-bold text-white">Review 0 Submission</h1>
             </div>
-            <p className="text-white/80 text-base sm:text-lg">
+            <p className="text-white/80 text-base sm:text-lg mb-3">
               Submit your team&apos;s Track, Problem Statement, Project Title, and Presentation (PPT).
             </p>
+            {!user?.is_leader && (
+              <div className="flex items-center gap-2 bg-amber-500/20 border border-amber-500/40 text-amber-200 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Notice: Only the team leader has permission to fill and submit Review 0.</span>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
@@ -307,7 +319,7 @@ export default function Review0Modal({
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting || !selectedTrackId || !selectedPsId || !title.trim() || !pptLink.trim()}
+                disabled={isSubmitting || !user?.is_leader || !selectedTrackId || !selectedPsId || !title.trim() || !pptLink.trim()}
                 className="text-xl sm:text-2xl border-r-4 border-b-4 border-black bg-gradient-to-r from-[#FF512F] to-[#F09819] hover:from-[#F09819] hover:to-[#FF512F] text-white p-4 rounded-lg font-bold shadow-lg"
               >
                 {isSubmitting ? "Submitting..." : "Submit Review 0"}
