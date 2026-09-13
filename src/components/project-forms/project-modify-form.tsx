@@ -7,6 +7,8 @@ import { easeOut, motion } from "framer-motion";
 import { toast } from "sonner";
 import React, { useState } from "react";
 import api from "@/lib/api";
+import { AlertTriangle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Submission {
   submission_id: number;
@@ -30,6 +32,7 @@ export default function ProjectModifyForm({
   submissionType,
   onSuccess,
 }: ProjectModifyFormProps) {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     title: submission.title || "",
     description: submission.description || "",
@@ -57,6 +60,10 @@ export default function ProjectModifyForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.is_leader) {
+      toast.error("Only the team leader can modify review submissions.");
+      return;
+    }
     if (!formData.github_link.trim()) {
       toast.error("GitHub repository link is required.");
       return;
@@ -114,10 +121,16 @@ export default function ProjectModifyForm({
             <h1 className="text-4xl font-bold text-white mb-2">
               Modify your project
             </h1>
-            <p className="text-white/80 text-xl">
+            <p className="text-white/80 text-xl mb-3">
               You are updating:{" "}
               <span className="font-semibold">{reviewStage}</span>
             </p>
+            {!user?.is_leader && (
+              <div className="flex items-center gap-2 bg-amber-500/20 border border-amber-500/40 text-amber-200 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Notice: Only the team leader has permission to modify review submissions.</span>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -177,7 +190,7 @@ export default function ProjectModifyForm({
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting || !formData.github_link.trim() || !formData.figma_link.trim()}
+                disabled={isSubmitting || !user?.is_leader || !formData.github_link.trim() || !formData.figma_link.trim()}
                 className="text-3xl border-r-4 border-b-4 border-black bg-white text-gray-800 p-5 rounded-lg font-medium hover:bg-gray-100"
               >
                 {isSubmitting ? "Modifying..." : "Modify"}

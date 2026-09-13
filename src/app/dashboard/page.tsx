@@ -186,6 +186,10 @@ const Dashboard = () => {
     }
   };
 
+  const isLeader = useMemo(() => {
+    return Boolean(user?.is_leader ?? dashboardData?.user?.is_leader);
+  }, [user?.is_leader, dashboardData?.user?.is_leader]);
+
   const sortedMembers = useMemo(() => {
     if (!dashboardData?.members) return [];
     return [...dashboardData.members].sort((a, b) => {
@@ -204,19 +208,25 @@ const Dashboard = () => {
     if (windows?.review0) {
       const hasR0 = !!existingReview0Submission || !!dashboardData?.team?.problem_statement_id;
       return {
-        text: hasR0 ? "Modify Review 0" : "Submit Review 0",
+        text: !isLeader
+          ? (hasR0 ? "Review 0 (Leader Only)" : "Submit Review 0 (Leader Only)")
+          : (hasR0 ? "Modify Review 0" : "Submit Review 0"),
         action: "review0",
       };
     }
     if (windows?.review1) {
       return {
-        text: existingReview1Submission ? "Modify Review 1" : "Submit Review 1",
+        text: !isLeader
+          ? (existingReview1Submission ? "Review 1 (Leader Only)" : "Submit Review 1 (Leader Only)")
+          : (existingReview1Submission ? "Modify Review 1" : "Submit Review 1"),
         action: "review1",
       };
     }
     if (windows?.review2) {
       return {
-        text: existingReview2Submission ? "Modify Review 2" : "Submit Review 2",
+        text: !isLeader
+          ? (existingReview2Submission ? "Review 2 (Leader Only)" : "Submit Review 2 (Leader Only)")
+          : (existingReview2Submission ? "Modify Review 2" : "Submit Review 2"),
         action: "review2",
       };
     }
@@ -224,8 +234,8 @@ const Dashboard = () => {
   };
 
   const handleButtonClick = () => {
-    if (!user?.is_leader) {
-      toast.error("Only the team leader can perform this action.");
+    if (!isLeader) {
+      toast.error("Only the team leader can fill or modify review forms.");
       return;
     }
     const { action } = getButtonState();
@@ -382,7 +392,7 @@ const Dashboard = () => {
                     {dashboardData?.team?.team_name || "Your Team"}
                   </h3>
                 </div>
-                {dashboardData?.windows?.review0 && user?.is_leader && (
+                {dashboardData?.windows?.review0 && isLeader && (
                   <button
                     onClick={() => setIsReview0ModalOpen(true)}
                     className="text-white/60 hover:text-[#F67C1B] transition-colors flex items-center gap-1.5 text-xs bg-white/5 px-2.5 py-1 rounded-full border border-white/10"
@@ -558,6 +568,11 @@ const Dashboard = () => {
                         : "Submissions are currently closed."}
                     </span>
                   )}
+                  {!isLeader && buttonState.action !== "closed" && buttonState.action !== "eliminated" && (
+                    <span className="text-[#F67C1B] text-[11px] mt-1.5 block font-medium">
+                      Only the team leader can fill and submit review forms.
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -589,7 +604,6 @@ const Dashboard = () => {
                   (track as unknown as { problem_statements?: unknown[] })?.problem_statements?.length ??
                   detail?.problem_statements.length ??
                   0;
-                const accentColor = trackColors[track.name] || "#11152B";
 
                 return (
                   <div
