@@ -137,14 +137,20 @@ const Dashboard = () => {
   );
 
   const submissionForCurrentPhase = useMemo(() => {
-    if (dashboardData?.windows?.review2) return existingReview2Submission || null;
-    if (dashboardData?.windows?.review1) return existingReview1Submission || null;
+    const currentPhaseLower = (dashboardData?.currentPhase || "").toLowerCase();
+    if (currentPhaseLower.includes("begin") || currentPhaseLower.includes("hacking")) return null;
+    if (dashboardData?.windows?.review2 && (currentPhaseLower.includes("review 2") || currentPhaseLower.includes("final"))) return existingReview2Submission || null;
+    if (dashboardData?.windows?.review1 && currentPhaseLower.includes("review 1")) return existingReview1Submission || null;
     return null;
-  }, [dashboardData?.windows, existingReview1Submission, existingReview2Submission]);
+  }, [dashboardData?.windows, dashboardData?.currentPhase, existingReview1Submission, existingReview2Submission]);
 
   const getCurrentReviewStage = () => {
-    if (dashboardData?.windows?.review2) return "Final Review (Review 2)";
-    if (dashboardData?.windows?.review1) return "Review 1";
+    const currentPhaseLower = (dashboardData?.currentPhase || "").toLowerCase();
+    if (currentPhaseLower.includes("begin") || currentPhaseLower.includes("hacking")) {
+      return dashboardData?.currentPhase || "Begin Hacking";
+    }
+    if (dashboardData?.windows?.review2 && (currentPhaseLower.includes("review 2") || currentPhaseLower.includes("final"))) return "Final Review (Review 2)";
+    if (dashboardData?.windows?.review1 && currentPhaseLower.includes("review 1")) return "Review 1";
     if (dashboardData?.windows?.review0) return "Review 0";
     return dashboardData?.currentPhase || "";
   };
@@ -204,8 +210,15 @@ const Dashboard = () => {
       return { text: "Team Eliminated", action: "eliminated" };
     }
 
+    const currentPhaseLower = (dashboardData?.currentPhase || "").toLowerCase();
+    const isHackingPhase = currentPhaseLower.includes("begin") || currentPhaseLower.includes("hacking");
+
+    if (isHackingPhase) {
+      return { text: "Submissions Closed", action: "closed" };
+    }
+
     const { windows } = dashboardData || {};
-    if (windows?.review0) {
+    if (windows?.review0 && (currentPhaseLower.includes("review 0") || currentPhaseLower.includes("review0") || currentPhaseLower.includes("track and problem") || currentPhaseLower.includes("problem statement"))) {
       const hasR0 = !!existingReview0Submission || !!dashboardData?.team?.problem_statement_id;
       return {
         text: !isLeader
@@ -214,7 +227,7 @@ const Dashboard = () => {
         action: "review0",
       };
     }
-    if (windows?.review1) {
+    if (windows?.review1 && (currentPhaseLower.includes("review 1") || currentPhaseLower.includes("review1"))) {
       return {
         text: !isLeader
           ? (existingReview1Submission ? "Review 1 (Leader Only)" : "Submit Review 1 (Leader Only)")
@@ -222,7 +235,7 @@ const Dashboard = () => {
         action: "review1",
       };
     }
-    if (windows?.review2) {
+    if (windows?.review2 && (currentPhaseLower.includes("review 2") || currentPhaseLower.includes("review2") || currentPhaseLower.includes("final"))) {
       return {
         text: !isLeader
           ? (existingReview2Submission ? "Review 2 (Leader Only)" : "Submit Review 2 (Leader Only)")
