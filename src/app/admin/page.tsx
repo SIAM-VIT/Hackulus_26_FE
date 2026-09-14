@@ -74,10 +74,10 @@ const hackathonPhases = [
   "Ideation",
   "Review 0",
   "Lunch",
-  "Begin Hacking",
+  "Begin Hacking (Review 1)",
   "Review 1",
   "Dinner",
-  "Begin Hacking",
+  "Begin Hacking (Review 2)",
   "Review 2",
   "Final Review",
 ];

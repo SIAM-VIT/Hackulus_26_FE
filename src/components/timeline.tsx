@@ -53,23 +53,35 @@ export default function Timeline({ currentPhase, teamName, onClose, className = 
   
   // Normalize string for matching just in case
   const normalizedCurrentPhase = (currentPhase || "").toLowerCase().trim();
-  let matchedIndex = HACKATHON_PHASES.findIndex(
-    (p) => p.toLowerCase() === normalizedCurrentPhase
-  );
-  if (matchedIndex === -1) {
-    if (
-      normalizedCurrentPhase.includes("review 0") ||
-      normalizedCurrentPhase.includes("review0") ||
-      normalizedCurrentPhase.includes("track and problem") ||
-      normalizedCurrentPhase.includes("problem statement")
-    ) {
-      matchedIndex = HACKATHON_PHASES.findIndex(
-        (p) =>
-          p.toLowerCase().includes("track and problem") ||
-          p.toLowerCase().includes("review 0")
-      );
-    }
+  let matchedIndex = -1;
+
+  if (
+    (normalizedCurrentPhase.includes("review 2") && (normalizedCurrentPhase.includes("begin") || normalizedCurrentPhase.includes("hacking"))) ||
+    normalizedCurrentPhase.includes("begin hacking 2") ||
+    normalizedCurrentPhase.includes("begin hacking (review 2)") ||
+    normalizedCurrentPhase.includes("post dinner") ||
+    normalizedCurrentPhase.includes("post-dinner")
+  ) {
+    matchedIndex = 7; // The "Begin Hacking" after Dinner
+  } else if (
+    (normalizedCurrentPhase.includes("review 1") && (normalizedCurrentPhase.includes("begin") || normalizedCurrentPhase.includes("hacking"))) ||
+    normalizedCurrentPhase.includes("begin hacking 1") ||
+    normalizedCurrentPhase.includes("begin hacking (review 1)")
+  ) {
+    matchedIndex = 4; // The "Begin Hacking" after Lunch
+  } else if (
+    normalizedCurrentPhase.includes("review 0") ||
+    normalizedCurrentPhase.includes("review0") ||
+    normalizedCurrentPhase.includes("track and problem") ||
+    normalizedCurrentPhase.includes("problem statement")
+  ) {
+    matchedIndex = 2;
+  } else {
+    matchedIndex = HACKATHON_PHASES.findIndex(
+      (p) => p.toLowerCase() === normalizedCurrentPhase
+    );
   }
+
   const currentIndex = matchedIndex === -1 ? 2 : matchedIndex;
 
   const getInitials = (name: string) =>
