@@ -77,6 +77,7 @@ const hackathonPhases = [
   "Begin Hacking",
   "Review 1",
   "Dinner",
+  "Begin Hacking",
   "Review 2",
   "Final Review",
 ];
@@ -703,8 +704,8 @@ const AdminDashboard = () => {
                       <SelectValue placeholder="Select a phase" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#151932] border-white/20 text-white">
-                      {hackathonPhases.map((phase) => (
-                        <SelectItem key={phase} value={phase} className="focus:bg-white/10 focus:text-white">
+                      {hackathonPhases.map((phase, idx) => (
+                        <SelectItem key={`${phase}-${idx}`} value={phase} className="focus:bg-white/10 focus:text-white">
                           {phase}
                         </SelectItem>
                       ))}
