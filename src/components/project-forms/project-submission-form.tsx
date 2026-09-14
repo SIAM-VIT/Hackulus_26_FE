@@ -45,22 +45,18 @@ export default function ProjectSubmissionForm({
       toast.error("GitHub repository link is required.");
       return;
     }
-    if (!formData.figma_link.trim()) {
-      toast.error("Figma design link is required.");
-      return;
-    }
 
     setIsSubmitting(true);
     try {
       if (!isReview2) {
         await api.post("/users/review1", {
           github_link: formData.github_link.trim(),
-          figma_link: formData.figma_link.trim(),
+          figma_link: formData.figma_link.trim() || undefined,
         });
       } else {
         await api.post("/users/review2", {
           github_link: formData.github_link.trim(),
-          figma_link: formData.figma_link.trim(),
+          figma_link: formData.figma_link.trim() || undefined,
           live_url: formData.live_url.trim() || undefined,
         });
       }
@@ -127,11 +123,10 @@ export default function ProjectSubmissionForm({
             <div>
               <label className="text-xl block text-white font-medium mb-1 flex items-center justify-between">
                 <span>Figma Design Link</span>
-                <span className="text-[#F67C1B] text-xs font-bold uppercase tracking-wider">Required</span>
+                <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">Optional</span>
               </label>
               <Input
                 type="url"
-                required
                 placeholder="https://www.figma.com/design/..."
                 value={formData.figma_link}
                 onChange={(e) => setFormData({ ...formData, figma_link: e.target.value })}
@@ -165,7 +160,7 @@ export default function ProjectSubmissionForm({
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting || !user?.is_leader || !formData.github_link.trim() || !formData.figma_link.trim()}
+                disabled={isSubmitting || !user?.is_leader || !formData.github_link.trim()}
                 className="text-3xl border-r-4 border-b-4 border-black bg-white text-gray-800 p-5 rounded-lg font-medium hover:bg-gray-100"
               >
                 {isSubmitting ? "Submitting..." : "Submit"}
